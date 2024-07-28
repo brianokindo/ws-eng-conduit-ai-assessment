@@ -1,0 +1,14 @@
+@Get('roster')
+async getUserStats(): Promise<UserStatsDto[]> {
+  return this.userService.getUserStats();
+}
+async getUserStats(): Promise<UserStatsDto[]> {
+  const users = await this.userRepository.find({ relations: ['articles'] });
+  return users.map(user => ({
+    username: user.username,
+    profileLink: `/profile/${user.username}`,
+    totalArticles: user.articles.length,
+    totalFavorites: user.articles.reduce((acc, article) => acc + article.favoritesCount, 0),
+    firstArticleDate: user.articles.length ? user.articles[0].createdAt : null,
+  }));
+}
